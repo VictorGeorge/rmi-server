@@ -15,6 +15,9 @@ public class MainClient {
     private Scanner scanner;
     // array é mantido para referência posterior de outros métodos
     private String[] files;
+    int choice, choice2, choice3, numeroPessoas = 0, numeroQuartos;
+    boolean idaEVolta;
+    String origem, destino, dataIda, dataVolta, dataEntrada, dataSaida, hotel;
 
     // construtor
     public MainClient() {
@@ -24,23 +27,26 @@ public class MainClient {
 
     // menu principal
     public void mainMenu() {
-        int choice, subchoice;
         do {
-            System.out.println("1 - Buy\n2 - Consult\n3 - Subscribe to event\n4 - Cancel Subscription\n5 - Exit");
+            System.out.println("1 - Comprar\n2 - Consultar\n3 - Inscrever em evento\n4 - Cancelar inscrição\n5 - Sair");
             choice = scanner.nextInt();
 // escolha das opções
             switch (choice) {
                 case 1:
-                    System.out.println("1 - Accommodation\n2 - Packages\n3 - Plane tickets\n4 - Return to main menu");
-                    subchoice = scanner.nextInt();
-                    switch (subchoice) {
+                    System.out.println("1 - Hospedagem\n2 - Pacotes\n3 - Passagens\n4 - Retornar a menu principal");
+                    choice2 = scanner.nextInt();
+                    switch (choice2) {
                         case 1:
+                            menuDadosHospedagem();
                             buyAccomodation();
                             break;
                         case 2:
+                            menuDadosTickets();
+                            menuDadosHospedagem();
                             buyPackage();
                             break;
                         case 3:
+                            menuDadosTickets();
                             buyPlaneTickets();
                             break;
                         case 4:
@@ -48,16 +54,20 @@ public class MainClient {
                     }
                     break;
                 case 2:
-                    System.out.println("1 - Accommodation\n2 - Packages\n3 - Plane tickets\n4 - Return to main menu");
-                    subchoice = scanner.nextInt();
-                    switch (subchoice) {
+                    System.out.println("1 - Hospedagem\n2 - Pacotes\n3 - Passagens\n4 - Retornar a menu principal");
+                    choice2 = scanner.nextInt();
+                    switch (choice2) {
                         case 1:
+                            menuDadosHospedagem();
                             consultAccomodation();
                             break;
                         case 2:
+                            menuDadosTickets();
+                            menuDadosHospedagem();
                             consultPackages();
                             break;
                         case 3:
+                            menuDadosTickets();
                             consultPlaneTickets();
                             break;
                         case 4:
@@ -77,6 +87,57 @@ public class MainClient {
                     break;
             }
         } while (true);
+    }
+
+    private void menuDadosTickets(){
+        System.out.println("\n1 - Ida e volta\n2 - Somente ida");
+        choice3 = scanner.nextInt();
+        switch(choice3){
+            case 1:
+                idaEVolta = Boolean.TRUE;
+                break;
+            case 2:
+                idaEVolta = Boolean.FALSE;
+                break;
+            default:
+                System.out.println("Erro");
+                break;
+        }
+        System.out.println("Origem: ");
+        scanner.nextLine();
+        origem = scanner.nextLine();
+        System.out.println("Destino: ");
+        destino = scanner.nextLine();
+        System.out.println("Data de ida (dd/mm/aaaa): ");
+        dataIda = scanner.nextLine();
+        if (idaEVolta) {
+            System.out.println("Data de volta (dd/mm/aaaa): ");
+            dataVolta = scanner.nextLine();
+        } else {
+            dataVolta = null;
+        }
+
+        System.out.println("Número de pessoas: ");
+        numeroPessoas = scanner.nextInt();
+    }
+
+    private void menuDadosHospedagem(){
+        System.out.println("\nInforme o nome do hotel: ");
+        scanner.nextLine();
+        hotel = scanner.nextLine();
+
+        System.out.println("Informe a data de entrada (dd/mm/aaaa): ");
+        dataEntrada = scanner.nextLine();
+
+        System.out.println("Informe a data de saída (dd/mm/aaaa): ");
+        dataSaida = scanner.nextLine();
+
+        System.out.println("Informe o número de quartos: ");
+        numeroQuartos = scanner.nextInt();
+        if(numeroPessoas == 0) {
+            System.out.println("Informe o número de pessoas: ");
+            numeroPessoas = scanner.nextInt();
+        }
     }
 
     private void consultPlaneTickets() {
