@@ -3,7 +3,6 @@ package me.distsys.common;
 import java.io.Serializable;
 
 public class Accommodation implements Serializable {
-
     private int id;
     private String hotel;
     private String dataEntrada;

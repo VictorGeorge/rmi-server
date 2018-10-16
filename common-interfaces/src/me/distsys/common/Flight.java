@@ -3,12 +3,19 @@ package me.distsys.common;
 import java.io.Serializable;
 
 public class Flight implements Serializable {
-
     private String origem;
     private String destino;
     private String data;
     private int vagas;
     private int precoUnitario;
+
+    public Flight(String origem, String destino, String data, int vagas, int precoUnitario) {
+        this.origem = origem;
+        this.destino = destino;
+        this.data = data;
+        this.vagas = vagas;
+        this.precoUnitario = precoUnitario;
+    }
 
     public String getOrigem() {
         return origem;
@@ -49,5 +56,4 @@ public class Flight implements Serializable {
     public void setPrecoUnitario(int precoUnitario) {
         this.precoUnitario = precoUnitario;
     }
-
 }
