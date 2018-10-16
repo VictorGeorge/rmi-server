@@ -1,16 +1,22 @@
 package me.distsys.client;
 
 import java.io.File;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 // classe que implementa a UI do programa. Todos os menus e submenus, sao exibidos aqui.
-public class MainClient {
+public class ClientMain {
     // instância do modelo de cliente da aplicação
-    Client client;
+    ClientInterfaceImpl clientImpl;
+
     // instância única do scanner
     private Scanner scanner;
     // array é mantido para referência posterior de outros métodos
@@ -20,8 +26,13 @@ public class MainClient {
     String origem, destino, dataIda, dataVolta, dataEntrada, dataSaida, hotel;
 
     // construtor
-    public MainClient() {
-        client = new Client();
+    public ClientMain() {
+        try {
+            Registry registry = LocateRegistry.getRegistry(1100);
+            clientImpl = new ClientInterfaceImpl(registry);
+        } catch (RemoteException | NotBoundException ex) {
+            Logger.getLogger(ClientMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
         scanner = new Scanner(System.in);
     }
 
@@ -74,12 +85,12 @@ public class MainClient {
                             break;
                     }
                     break;
-                case 3:
-                    subscribeSection();
-                    break;
-                case 4:
-                    unsubscribeSection();
-                    break;
+//                case 3:
+//                    subscribeSection();
+//                    break;
+//                case 4:
+//                    unsubscribeSection();
+//                    break;
                 case 5:
                     clearResourcesOnServer();
                     // System.exit é usado porque o cliente RMI inicializa um Daemon que não encerra com o fim da execução principal.
@@ -89,10 +100,10 @@ public class MainClient {
         } while (true);
     }
 
-    private void menuDadosTickets(){
+    private void menuDadosTickets() {
         System.out.println("\n1 - Ida e volta\n2 - Somente ida");
         choice3 = scanner.nextInt();
-        switch(choice3){
+        switch (choice3) {
             case 1:
                 idaEVolta = Boolean.TRUE;
                 break;
@@ -121,7 +132,7 @@ public class MainClient {
         numeroPessoas = scanner.nextInt();
     }
 
-    private void menuDadosHospedagem(){
+    private void menuDadosHospedagem() {
         System.out.println("\nInforme o nome do hotel: ");
         scanner.nextLine();
         hotel = scanner.nextLine();
@@ -134,71 +145,87 @@ public class MainClient {
 
         System.out.println("Informe o número de quartos: ");
         numeroQuartos = scanner.nextInt();
-        if(numeroPessoas == 0) {
+        if (numeroPessoas == 0) {
             System.out.println("Informe o número de pessoas: ");
             numeroPessoas = scanner.nextInt();
         }
     }
 
-    private void consultPlaneTickets(String origem, String destino, String dataIda, String dataVolta, int numeroPessoas) {
-        try {
-            System.out.println(client.consultPlaneTickets(origem, destino, dataIda, dataVolta, numeroPessoas));
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+    /**
+     * método de consulta de tickets
+     *
+     * @param origem, destino, dataIda, dataVolta, numeroPessoas
+     * @throws RemoteException
+     */
+    public String consultPlaneTickets(String origem, String destino, String dataIda, String dataVolta, int numeroPessoas) throws RemoteException {
+        return clientImpl.serverInterface.consultPlaneTickets(origem, destino, dataIda, dataVolta, numeroPessoas);
     }
 
-    private void buyPlaneTickets(String origem, String destino, String dataIda, String dataVolta, int numeroPessoas) {
-        try {
-            client.buyPlaneTickets(origem, destino, dataIda, dataVolta, numeroPessoas);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+    /**
+     * método de compra de tickets
+     *
+     * @param origem, destino, dataIda, dataVolta, numeroPessoas
+     * @throws RemoteException
+     */
+    public void buyPlaneTickets(String origem, String destino, String dataIda, String dataVolta, int numeroPessoas) throws RemoteException {
+        clientImpl.serverInterface.buyPlaneTickets(origem, destino, dataIda, dataVolta, numeroPessoas);
     }
 
-    private void consultPackages(String origem, String destino, String dataIda, String dataVolta, int numeroPessoas, String hotel, String dataEntrada, String dataSaida, int numeroQuartos) {
-        try {
-            client.consultPackages(origem, destino, dataIda, dataVolta, numeroPessoas, hotel, dataEntrada, dataSaida, numeroQuartos);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+    /**
+     * método de consulta de pacotes
+     *
+     * @param origem, destino, dataIda, dataVolta, numeroPessoas, hotel, dataEntrada, dataSaida, numeroQuartos
+     * @throws RemoteException
+     */
+    void consultPackages(String origem, String destino, String dataIda, String dataVolta, int numeroPessoas, String hotel, String dataEntrada, String dataSaida, int numeroQuartos) throws RemoteException {
+        clientImpl.serverInterface.consultPackages(origem, destino, dataIda, dataVolta, numeroPessoas, hotel, dataEntrada, dataSaida, numeroQuartos);
     }
 
-    private void buyPackage(String origem, String destino, String dataIda, String dataVolta, int numeroPessoas, String hotel, String dataEntrada, String dataSaida, int numeroQuartos) {
-        try {
-            client.buyPackage(origem, destino, dataIda, dataVolta, numeroPessoas, hotel, dataEntrada, dataSaida, numeroQuartos);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+    /**
+     * método de compra de pacotes
+     *
+     * @param origem, destino, dataIda, dataVolta, numeroPessoas, hotel, dataEntrada, dataSaida, numeroQuartos
+     * @throws RemoteException
+     */
+    void buyPackage(String origem, String destino, String dataIda, String dataVolta, int numeroPessoas, String hotel, String dataEntrada, String dataSaida, int numeroQuartos) throws RemoteException {
+        clientImpl.serverInterface.buyPackage(origem, destino, dataIda, dataVolta, numeroPessoas, hotel, dataEntrada, dataSaida, numeroQuartos);
     }
 
-    private void consultAccomodation(String hotel, String dataEntrada, String dataSaida, int numeroQuartos, int numeroPessoas) {
-        try {
-            client.consultAccomodation(hotel, dataEntrada, dataSaida, numeroQuartos, numeroPessoas);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+    /**
+     * método de consulta de hospedagem
+     *
+     * @param hotel, dataEntrada, dataSaida, numeroQuartos, numeroPessoas
+     * @throws RemoteException
+     */
+    void consultAccomodation(String hotel, String dataEntrada, String dataSaida, int numeroQuartos, int numeroPessoas) throws RemoteException {
+        clientImpl.serverInterface.consultAccomodation(hotel, dataEntrada, dataSaida, numeroQuartos, numeroPessoas);
     }
 
-    private void buyAccomodation(String hotel, String dataEntrada, String dataSaida, int numeroQuartos, int numeroPessoas) {
-        try {
-            client.buyAccomodation(hotel, dataEntrada, dataSaida, numeroQuartos, numeroPessoas);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+    /**
+     * método de compra de hospedagem
+     *
+     * @param hotel, dataEntrada, dataSaida, numeroQuartos, numeroPessoas
+     * @throws RemoteException
+     */
+    void buyAccomodation(String hotel, String dataEntrada, String dataSaida, int numeroQuartos, int numeroPessoas) throws RemoteException {
+        clientImpl.serverInterface.buyAccomodation(hotel, dataEntrada, dataSaida, numeroQuartos, numeroPessoas);
     }
 
-    // desaloca todas os arquivos inscritos pelo cliente
+    // desaloca todas os recursos inscritos pelo cliente
     private void clearResourcesOnServer() {
-        try {
-            // recupera a lista de arquivos inscritos pelo cliente
-            String[] strings = client.listClientSubscribedFiles();
-            // um a um se desinscreve
-            for (String string : strings) client.unsubscribe(string);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            // recupera a lista de arquivos inscritos pelo cliente
+//            //String[] strings = client.listClientSubscribedFiles();
+//            // um a um se desinscreve
+//            for (String string : strings) client.unsubscribe(string);
+//        } catch (RemoteException e) {
+//            e.printStackTrace();
+//        }
     }
+
+    //<editor-fold desc="Event notification methods">
+/*
+
 
     // lista de arquivos contidos no servidor
     private void listFilesSection() {
@@ -217,7 +244,7 @@ public class MainClient {
     // submenu de download de um arquivo
     private void downloadSection() {
         listFilesSection();
-        System.out.println("Select a file to download From Server: ");
+        System.out.println("Select a file to download From ServerMain: ");
         int choice = scanner.nextInt();
         try {
             boolean result = client.downloadFromServer(files[choice]);
@@ -232,7 +259,7 @@ public class MainClient {
 
     // submenu de upload de um arquivo
     private void uploadSection() {
-        System.out.println("Enter a file path for upload To Server: ");
+        System.out.println("Enter a file path for upload To ServerMain: ");
         scanner.nextLine();
         String path = scanner.nextLine();
         File file = new File(path);
@@ -284,11 +311,12 @@ public class MainClient {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-    }
+    }*/
+    //</editor-fold>
 
     // main do cliente
     public static void main(String[] args) {
-        MainClient m = new MainClient();
+        ClientMain m = new ClientMain();
         m.mainMenu();
     }
 }

@@ -1,18 +1,17 @@
 package me.distsys.server;
 
+import me.distsys.common.Accommodation;
 import me.distsys.common.ClientInterface;
 import me.distsys.common.ClientSubscription;
+import me.distsys.common.Flight;
 import me.distsys.common.ServerInterface;
 
-import java.io.*;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-
-import static me.distsys.common.Configuration.SERVER_DEFAULT_FOLDER;
 
 /**
  * Implementação da interface ServerInterface. Métodos documentados com JavaDoc na interface.
@@ -64,51 +63,17 @@ public class ServerInterfaceImpl extends UnicastRemoteObject implements ServerIn
         voos.add(cadastroVoo);
     }
 
-    public void addAccommodation(String hotel,String dataEntrada,String dataSaida, int numeroQuartos, int numeroPessoas, int preçoQuarto, int preçoPessoa) throws RemoteException{
+    public void addAccommodation(String hotel,String dataEntrada,String dataSaida, int numeroQuartos, int numeroPessoas, int precoQuarto, int precoPessoa) throws RemoteException{
         Accommodation hospedagemCadastro = new Accommodation();
         hospedagemCadastro.setHotel(hotel);
         hospedagemCadastro.setDataEntrada(dataEntrada);
         hospedagemCadastro.setDataSaida(dataSaida);
         hospedagemCadastro.setNumeroQuartos(numeroQuartos);
         hospedagemCadastro.setNumeroPessoas(numeroPessoas);
-        hospedagemCadastro.setPrecoPorQuarto(preçoQuarto);
-        hospedagemCadastro.setPrecoPorPessoa(preçoPessoa);
+        hospedagemCadastro.setPrecoPorQuarto(precoQuarto);
+        hospedagemCadastro.setPrecoPorPessoa(precoPessoa);
 
         hospedagens.add(hospedagemCadastro);
-    }
-
-
-
-    public byte[] downloadFile(String fileName) throws RemoteException {
-        File file = new File(SERVER_DEFAULT_FOLDER + File.separator + fileName);
-        try (BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(file));) {
-            byte[] buffer = new byte[(int) file.length()];
-            int read = bufferedInputStream.read(buffer, 0, buffer.length);
-            return buffer;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return new byte[0];
-    }
-
-    public boolean uploadFile(byte[] buffer, String fileName) throws RemoteException {
-        File file = new File(SERVER_DEFAULT_FOLDER + File.separator + fileName);
-        file.getParentFile().mkdirs();
-        try {
-            file.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(file))) {
-            bufferedOutputStream.write(buffer, 0, buffer.length);
-            boolean b = file.length() == buffer.length;
-            if (b)
-                notifySubscribedClients(fileName);
-            return b;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 
     //Notifica todos os clientes interessados num arquivo.
@@ -123,11 +88,6 @@ public class ServerInterfaceImpl extends UnicastRemoteObject implements ServerIn
             if (timeDifference <= clientSubscription.subscriptionDuration)
                 clientSubscription.clientInterface.notifyClient(String.format("The file %s is now available.", fileName));
         }
-    }
-
-    public String[] listFiles() throws RemoteException {
-        File defaultFolder = new File(SERVER_DEFAULT_FOLDER);
-        return defaultFolder.list();
     }
 
     public boolean subscribeToFile(String fileName, ClientSubscription clientSubscription) throws RemoteException {

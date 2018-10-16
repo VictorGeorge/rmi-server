@@ -1,4 +1,4 @@
-package me.distsys.server;
+package me.distsys.common;
 
 import java.io.Serializable;
 
