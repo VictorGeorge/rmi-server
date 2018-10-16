@@ -14,7 +14,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static me.distsys.common.Configuration.PORT;
-import static me.distsys.common.Configuration.SERVER_DEFAULT_FOLDER;
 
 public class Server {
     /**
@@ -27,12 +26,6 @@ public class Server {
             int choice, numeroPessoas = 0, numeroQuartos, vagas, preço, preçoQuarto, preçoPessoa;
             String origem, destino, dataIda, dataVolta, dataEntrada, dataSaida, hotel, data;
 
-            // cria pasta padrão se ela não existir
-            File defaultFolder = new File(SERVER_DEFAULT_FOLDER);
-            if (!defaultFolder.exists()) {
-                boolean b = defaultFolder.mkdirs();
-                System.err.println(b ? "Default folder created successfully!" : "Failure creating default folder");
-            }
             ServerInterfaceImpl server = new ServerInterfaceImpl();
             // instancia serviço de nomes e implementacao do servidor
             Registry registry = LocateRegistry.createRegistry(PORT);
