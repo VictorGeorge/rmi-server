@@ -114,4 +114,57 @@ class Client {
         return strings;
     }
 
+    /**
+     * método de consulta de tickets
+     * @param origem, destino, dataIda, dataVolta, numeroPessoas
+     * @throws RemoteException
+     */
+    public String consultPlaneTickets(String origem, String destino, String dataIda, String dataVolta, int numeroPessoas) throws RemoteException {
+        return clientImpl.serverInterface.consultPlaneTickets(origem, destino, dataIda, dataVolta, numeroPessoas);
+    }
+
+    /**
+     * método de compra de tickets
+     * @param origem, destino, dataIda, dataVolta, numeroPessoas
+     * @throws RemoteException
+     */
+    public void buyPlaneTickets(String origem, String destino, String dataIda, String dataVolta, int numeroPessoas) throws RemoteException{
+        clientImpl.serverInterface.buyPlaneTickets(origem, destino, dataIda, dataVolta, numeroPessoas);
+    }
+
+    /**
+     * método de consulta de pacotes
+     * @param origem, destino, dataIda, dataVolta, numeroPessoas, hotel, dataEntrada, dataSaida, numeroQuartos
+     * @throws RemoteException
+     */
+    void consultPackages(String origem, String destino, String dataIda, String dataVolta, int numeroPessoas, String hotel, String dataEntrada, String dataSaida, int numeroQuartos) throws RemoteException{
+        clientImpl.serverInterface.consultPackages(origem, destino, dataIda, dataVolta, numeroPessoas, hotel, dataEntrada, dataSaida, numeroQuartos);
+    }
+
+    /**
+     * método de compra de pacotes
+     * @param origem, destino, dataIda, dataVolta, numeroPessoas, hotel, dataEntrada, dataSaida, numeroQuartos
+     * @throws RemoteException
+     */
+    void buyPackage(String origem, String destino, String dataIda, String dataVolta, int numeroPessoas, String hotel, String dataEntrada, String dataSaida, int numeroQuartos) throws RemoteException{
+        clientImpl.serverInterface.buyPackage(origem, destino, dataIda, dataVolta, numeroPessoas, hotel, dataEntrada, dataSaida, numeroQuartos);
+    }
+
+    /**
+     * método de consulta de hospedagem
+     * @param hotel, dataEntrada, dataSaida, numeroQuartos, numeroPessoas
+     * @throws RemoteException
+     */
+    void consultAccomodation(String hotel, String dataEntrada, String dataSaida, int numeroQuartos, int numeroPessoas) throws RemoteException{
+        clientImpl.serverInterface.consultAccomodation(hotel, dataEntrada, dataSaida, numeroQuartos, numeroPessoas);
+    }
+
+    /**
+     * método de compra de hospedagem
+     * @param hotel, dataEntrada, dataSaida, numeroQuartos, numeroPessoas
+     * @throws RemoteException
+     */
+    void buyAccomodation(String hotel, String dataEntrada, String dataSaida, int numeroQuartos, int numeroPessoas) throws RemoteException{
+        clientImpl.serverInterface.buyAccomodation(hotel, dataEntrada, dataSaida, numeroQuartos, numeroPessoas);
+    }
 }

@@ -38,16 +38,16 @@ public class MainClient {
                     switch (choice2) {
                         case 1:
                             menuDadosHospedagem();
-                            buyAccomodation();
+                            buyAccomodation(hotel, dataEntrada, dataSaida, numeroQuartos, numeroPessoas);
                             break;
                         case 2:
                             menuDadosTickets();
                             menuDadosHospedagem();
-                            buyPackage();
+                            buyPackage(origem, destino, dataIda, dataVolta, numeroPessoas, hotel, dataEntrada, dataSaida, numeroQuartos);
                             break;
                         case 3:
                             menuDadosTickets();
-                            buyPlaneTickets();
+                            buyPlaneTickets(origem, destino, dataIda, dataVolta, numeroPessoas);
                             break;
                         case 4:
                             break;
@@ -59,16 +59,16 @@ public class MainClient {
                     switch (choice2) {
                         case 1:
                             menuDadosHospedagem();
-                            consultAccomodation();
+                            consultAccomodation(hotel, dataEntrada, dataSaida, numeroQuartos, numeroPessoas);
                             break;
                         case 2:
                             menuDadosTickets();
                             menuDadosHospedagem();
-                            consultPackages();
+                            consultPackages(origem, destino, dataIda, dataVolta, numeroPessoas, hotel, dataEntrada, dataSaida, numeroQuartos);
                             break;
                         case 3:
                             menuDadosTickets();
-                            consultPlaneTickets();
+                            consultPlaneTickets(origem, destino, dataIda, dataVolta, numeroPessoas);
                             break;
                         case 4:
                             break;
@@ -140,28 +140,52 @@ public class MainClient {
         }
     }
 
-    private void consultPlaneTickets() {
-        // TODO: 11/10/2018
+    private void consultPlaneTickets(String origem, String destino, String dataIda, String dataVolta, int numeroPessoas) {
+        try {
+            System.out.println(client.consultPlaneTickets(origem, destino, dataIda, dataVolta, numeroPessoas));
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void consultPackages() {
-        // TODO: 11/10/2018
+    private void buyPlaneTickets(String origem, String destino, String dataIda, String dataVolta, int numeroPessoas) {
+        try {
+            client.buyPlaneTickets(origem, destino, dataIda, dataVolta, numeroPessoas);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void consultAccomodation() {
-        // TODO: 11/10/2018
+    private void consultPackages(String origem, String destino, String dataIda, String dataVolta, int numeroPessoas, String hotel, String dataEntrada, String dataSaida, int numeroQuartos) {
+        try {
+            client.consultPackages(origem, destino, dataIda, dataVolta, numeroPessoas, hotel, dataEntrada, dataSaida, numeroQuartos);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void buyPlaneTickets() {
-        // TODO: 11/10/2018
+    private void buyPackage(String origem, String destino, String dataIda, String dataVolta, int numeroPessoas, String hotel, String dataEntrada, String dataSaida, int numeroQuartos) {
+        try {
+            client.buyPackage(origem, destino, dataIda, dataVolta, numeroPessoas, hotel, dataEntrada, dataSaida, numeroQuartos);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void buyPackage() {
-        // TODO: 11/10/2018
+    private void consultAccomodation(String hotel, String dataEntrada, String dataSaida, int numeroQuartos, int numeroPessoas) {
+        try {
+            client.consultAccomodation(hotel, dataEntrada, dataSaida, numeroQuartos, numeroPessoas);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void buyAccomodation() {
-        // TODO: 11/10/2018
+    private void buyAccomodation(String hotel, String dataEntrada, String dataSaida, int numeroQuartos, int numeroPessoas) {
+        try {
+            client.buyAccomodation(hotel, dataEntrada, dataSaida, numeroQuartos, numeroPessoas);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     // desaloca todas os arquivos inscritos pelo cliente

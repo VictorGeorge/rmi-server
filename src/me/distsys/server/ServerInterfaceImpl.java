@@ -25,22 +25,27 @@ public class ServerInterfaceImpl extends UnicastRemoteObject implements ServerIn
         subscribedUsersHashMap = new HashMap<>();
     }
 
-    public void consultPlaneTickets() throws RemoteException{
+    public String consultPlaneTickets(String origem, String destino, String dataIda, String dataVolta, int numeroPessoas) throws RemoteException{
+        return "test";
+    }
+
+    public void buyPlaneTickets(String origem, String destino, String dataIda, String dataVolta, int numeroPessoas) throws RemoteException{
         // TODO: 11/10/2018
     }
-    public void consultPackages() throws RemoteException{
+
+    public void consultPackages(String origem, String destino, String dataIda, String dataVolta, int numeroPessoas, String hotel, String dataEntrada, String dataSaida, int numeroQuartos) throws RemoteException{
         // TODO: 11/10/2018
     }
-    public void consultAccomodation() throws RemoteException{
+
+    public void buyPackage(String origem, String destino, String dataIda, String dataVolta, int numeroPessoas, String hotel, String dataEntrada, String dataSaida, int numeroQuartos) throws RemoteException{
         // TODO: 11/10/2018
     }
-    public void buyPlaneTickets() throws RemoteException{
+
+    public void consultAccomodation(String hotel, String dataEntrada, String dataSaida, int numeroQuartos, int numeroPessoas) throws RemoteException{
         // TODO: 11/10/2018
     }
-    public void buyPackage() throws RemoteException{
-        // TODO: 11/10/2018
-    }
-    public void buyAccomodation() throws RemoteException{
+
+    public void buyAccomodation(String hotel, String dataEntrada, String dataSaida, int numeroQuartos, int numeroPessoas) throws RemoteException{
         // TODO: 11/10/2018
     }
 
