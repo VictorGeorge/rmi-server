@@ -50,6 +50,21 @@ public interface ServerInterface extends Remote {
      */
     void buyAccomodation(String hotel, String dataEntrada, String dataSaida, int numeroQuartos, int numeroPessoas) throws RemoteException;
 
+
+    /**
+     * cadastra voo
+     * @param origem, destino, data, vagas, preço
+     * @throws RemoteException
+     */
+    void addFlight(String origem,String destino,String data, int vagas, int preço) throws RemoteException;
+
+    /**
+     * cadastra hotel
+     * @param hotel, dataEntrada, dataSaida, numeroQuartos, numeroPessoas, preçoQuarto, preçoPessoa
+     * @throws RemoteException
+     */
+    void addAccommodation(String hotel,String dataEntrada,String dataSaida, int numeroQuartos, int numeroPessoas, int preçoQuarto, int preçoPessoa) throws RemoteException;
+
     /**
      * Método de upload de um arquivo para o servidor.
      * @param buffer array de bytes contendo os dados do arquivo

@@ -30,7 +30,7 @@ public class MainClient {
         do {
             System.out.println("1 - Comprar\n2 - Consultar\n3 - Inscrever em evento\n4 - Cancelar inscrição\n5 - Sair");
             choice = scanner.nextInt();
-// escolha das opções
+            // escolha das opções
             switch (choice) {
                 case 1:
                     System.out.println("1 - Hospedagem\n2 - Pacotes\n3 - Passagens\n4 - Retornar a menu principal");

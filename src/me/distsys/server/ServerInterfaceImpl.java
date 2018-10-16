@@ -7,6 +7,7 @@ import me.distsys.common.ServerInterface;
 import java.io.*;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,6 +21,9 @@ import static me.distsys.common.Configuration.SERVER_DEFAULT_FOLDER;
 public class ServerInterfaceImpl extends UnicastRemoteObject implements ServerInterface {
     // HashMap onde a chave é o arquivo, e o valor é a lista de clientes interessados
     private HashMap<String, List<ClientSubscription>> subscribedUsersHashMap;
+
+    private List<Flight> voos = new ArrayList<>();
+    private List<Accommodation> hospedagens = new ArrayList<>();
 
     ServerInterfaceImpl() throws RemoteException {
         subscribedUsersHashMap = new HashMap<>();
@@ -48,6 +52,32 @@ public class ServerInterfaceImpl extends UnicastRemoteObject implements ServerIn
     public void buyAccomodation(String hotel, String dataEntrada, String dataSaida, int numeroQuartos, int numeroPessoas) throws RemoteException{
         // TODO: 11/10/2018
     }
+
+    public void addFlight(String origem,String destino,String data, int vagas, int preço) throws RemoteException{
+        Flight cadastroVoo = new Flight();
+        cadastroVoo.setOrigem(origem);
+        cadastroVoo.setDestino(destino);
+        cadastroVoo.setData(data);
+        cadastroVoo.setVagas(vagas);
+        cadastroVoo.setPrecoUnitario(preço);
+
+        voos.add(cadastroVoo);
+    }
+
+    public void addAccommodation(String hotel,String dataEntrada,String dataSaida, int numeroQuartos, int numeroPessoas, int preçoQuarto, int preçoPessoa) throws RemoteException{
+        Accommodation hospedagemCadastro = new Accommodation();
+        hospedagemCadastro.setHotel(hotel);
+        hospedagemCadastro.setDataEntrada(dataEntrada);
+        hospedagemCadastro.setDataSaida(dataSaida);
+        hospedagemCadastro.setNumeroQuartos(numeroQuartos);
+        hospedagemCadastro.setNumeroPessoas(numeroPessoas);
+        hospedagemCadastro.setPrecoPorQuarto(preçoQuarto);
+        hospedagemCadastro.setPrecoPorPessoa(preçoPessoa);
+
+        hospedagens.add(hospedagemCadastro);
+    }
+
+
 
     public byte[] downloadFile(String fileName) throws RemoteException {
         File file = new File(SERVER_DEFAULT_FOLDER + File.separator + fileName);
