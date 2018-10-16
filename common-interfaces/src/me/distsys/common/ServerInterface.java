@@ -10,14 +10,14 @@ public interface ServerInterface extends Remote {
      * @param searchParams
      * @throws RemoteException
      */
-    int consultPlaneTickets(SearchParams searchParams) throws RemoteException;
+    int[] consultPlaneTickets(SearchParams searchParams) throws RemoteException;
 
     /**
      * método de compra de tickets
-     * @param id, numeroPessoas
+     * @param idsTuple, numeroPessoas
      * @throws RemoteException
      */
-    boolean buyPlaneTickets(int id, int numeroPessoas) throws RemoteException;
+    boolean buyPlaneTickets(int[] idsTuple, int numeroPessoas) throws RemoteException;
 
     /**
      * método de consulta de hospedagem

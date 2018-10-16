@@ -11,9 +11,12 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * Implementação da interface ServerInterface. Métodos documentados com JavaDoc na interface.
+ *
  * @see ServerInterface
  */
 public class ServerInterfaceImpl extends UnicastRemoteObject implements ServerInterface {
@@ -39,16 +42,47 @@ public class ServerInterfaceImpl extends UnicastRemoteObject implements ServerIn
     }
 
     @Override
-    public int consultPlaneTickets(SearchParams searchParams) throws RemoteException {
-        return 0;
+    public int[] consultPlaneTickets(SearchParams searchParams) throws RemoteException {
+        int[] idsTuple = new int[2];
+
+        Stream<Flight> departureFlightStream = flights.stream().filter(flight ->
+                flight.getOrigem().equals(searchParams.origem) &&
+                        flight.getDestino().equals(searchParams.destino) &&
+                        flight.getData().equals(searchParams.dataIda) &&
+                        flight.getVagas() >= searchParams.numeroPessoas
+        );
+        Optional<Flight> optionalDeparture = departureFlightStream.findFirst();
+        optionalDeparture.ifPresent(flight -> idsTuple[0] = flights.indexOf(flight));
+
+        if (!searchParams.idaEVolta) return idsTuple;
+        Stream<Flight> returnFlightStream = flights.stream().filter(flight ->
+                flight.getOrigem().equals(searchParams.destino) &&
+                        flight.getDestino().equals(searchParams.origem) &&
+                        flight.getData().equals(searchParams.dataVolta) &&
+                        flight.getVagas() >= searchParams.numeroPessoas
+        );
+        Optional<Flight> optionalReturn = returnFlightStream.findFirst();
+        optionalReturn.ifPresent(flight -> idsTuple[1] = flights.indexOf(flight));
+
+        return idsTuple;
     }
 
     @Override
-    public boolean buyPlaneTickets(int id, int numeroPessoas) throws RemoteException {
-        int vagas = flights.get(id).getVagas();
+    public boolean buyPlaneTickets(int[] idsTuple, int numeroPessoas) throws RemoteException {
+        Flight departureFlight = flights.get(idsTuple[0]);
+        int vagas = departureFlight.getVagas();
         boolean b = vagas >= numeroPessoas;
         if (b) {
-            flights.get(id).setVagas(vagas - numeroPessoas);
+            departureFlight.setVagas(vagas - numeroPessoas);
+        }
+        if (idsTuple.length < 2)
+            return b;
+
+        Flight returnFlight = flights.get(idsTuple[1]);
+        vagas = returnFlight.getVagas();
+        b = vagas >= numeroPessoas;
+        if (b) {
+            returnFlight.setVagas(vagas - numeroPessoas);
         }
         return b;
     }
