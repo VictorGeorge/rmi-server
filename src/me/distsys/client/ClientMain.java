@@ -37,6 +37,7 @@ public class ClientMain {
     // menu principal
     public void mainMenu() throws RemoteException {
         int choice, choice2;
+        boolean buyed;
         do {
             System.out.println("1 - Consultar e comprar \n2 - Inscrever-se em notificações\n3 - Cancelar inscrição\n4 - Sair");
             choice = scanner.nextInt();
@@ -49,7 +50,7 @@ public class ClientMain {
                         case 1: {
                             SearchParams searchParams = showFlightSearchForm();
                             int[] id = clientImpl.serverInterface.consultPlaneTickets(searchParams);
-                            boolean buyed = clientImpl.serverInterface.buyPlaneTickets(id, searchParams.numeroPessoas);
+                            buyed = clientImpl.serverInterface.buyPlaneTickets(id, searchParams.numeroPessoas);
                             if(buyed == true)
                                 System.out.println("\nCompra bem sucedida\n");
                             else
@@ -59,7 +60,11 @@ public class ClientMain {
                         case 2: {
                             SearchParams searchParams = showHotelSearchForm();
                             int id = clientImpl.serverInterface.consultAccomodation(searchParams);
-                            clientImpl.serverInterface.buyAccomodation(id, searchParams.numeroQuartos, searchParams.numeroPessoas);
+                            buyed = clientImpl.serverInterface.buyAccomodation(id, searchParams.numeroQuartos, searchParams.numeroPessoas);
+                            if(buyed == true)
+                                System.out.println("\nCompra bem sucedida\n");
+                            else
+                                System.out.println("\nHotel com os seguintes parâmetros não encontrada!\n");
                             break;
                         }
                         case 3: {
@@ -119,6 +124,7 @@ public class ClientMain {
         SearchParams searchParams = new SearchParams();
 
         System.out.println("\nInforme o nome do hotel: ");
+        scanner.nextLine();
         searchParams.hotel = scanner.nextLine();
 
         System.out.println("Informe a data de entrada (dd/mm/aaaa): ");

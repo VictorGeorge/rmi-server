@@ -38,9 +38,9 @@ public class ServerInterfaceImpl extends UnicastRemoteObject implements ServerIn
         flights.add(new Flight("JFK", "GRU", "10/02/2019", 150, 100));
         flights.add(new Flight("GRU", "JFK", "11/02/2019", 150, 100));
 
-        accommodations.add(new Accommodation(1, "Copacabana", "10/02/2019", "14/02/2019", 120, 400, 320, 100, 420));
+        accommodations.add(new Accommodation(0, "Copacabana", "10/02/2019", "14/02/2019", 100, 400, 320, 100, 420));
+        accommodations.add(new Accommodation(1, "b", "11/02/2019", "11/02/2019", 120, 420, 320, 100, 420));
 
-        //TODO MOCK DATASET FOR ACCOMMODATION
     }
 
     @Override
@@ -95,12 +95,23 @@ public class ServerInterfaceImpl extends UnicastRemoteObject implements ServerIn
 
     @Override
     public int consultAccomodation(SearchParams searchParams) throws RemoteException {
-        return 0;
+        int[] idsTuple = new int[2];
+        idsTuple[0] = -1;
+        Stream<Accommodation> availableAccomodations = accommodations.stream().filter(accommodation ->
+                accommodation.getHotel().equals(searchParams.hotel) &&
+                        accommodation.getDataEntrada().equals(searchParams.dataEntrada) &&
+                        accommodation.getDataSaida().equals(searchParams.dataSaida));
+
+        Optional<Accommodation> optionalAccommodation = availableAccomodations.findFirst();
+        optionalAccommodation.ifPresent(accommodation -> idsTuple[0] = accommodations.indexOf(accommodation));
+        return idsTuple[0];
     }
 
     @Override
     public boolean buyAccomodation(int id, int numeroQuartos, int numeroPessoas) throws RemoteException {
-        int vagas = flights.get(id).getVagas();
+        if (id == -1)//error in buying
+            return false;
+        int vagas = accommodations.get(id).getNumeroPessoas();
         boolean b = vagas >= numeroPessoas;
         if (b) {
             flights.get(id).setVagas(vagas - numeroPessoas);
