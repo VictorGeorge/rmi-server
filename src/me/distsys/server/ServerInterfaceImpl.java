@@ -38,12 +38,16 @@ public class ServerInterfaceImpl extends UnicastRemoteObject implements ServerIn
         flights.add(new Flight("JFK", "GRU", "10/02/2019", 150, 100));
         flights.add(new Flight("GRU", "JFK", "11/02/2019", 150, 100));
 
+        accommodations.add(new Accommodation(1, "Copacabana", "10/02/2019", "14/02/2019", 120, 400, 320, 100, 420));
+
         //TODO MOCK DATASET FOR ACCOMMODATION
     }
 
     @Override
     public int[] consultPlaneTickets(SearchParams searchParams) throws RemoteException {
         int[] idsTuple = new int[2];
+        idsTuple[0] = -1;
+        idsTuple[1] = -1;
 
         Stream<Flight> departureFlightStream = flights.stream().filter(flight ->
                 flight.getOrigem().equals(searchParams.origem) &&
@@ -69,13 +73,15 @@ public class ServerInterfaceImpl extends UnicastRemoteObject implements ServerIn
 
     @Override
     public boolean buyPlaneTickets(int[] idsTuple, int numeroPessoas) throws RemoteException {
+        if (idsTuple[0] == -1)//error in buying
+            return false;
         Flight departureFlight = flights.get(idsTuple[0]);
         int vagas = departureFlight.getVagas();
         boolean b = vagas >= numeroPessoas;
         if (b) {
             departureFlight.setVagas(vagas - numeroPessoas);
         }
-        if (idsTuple.length < 2)
+        if (idsTuple[1] == -1)
             return b;
 
         Flight returnFlight = flights.get(idsTuple[1]);

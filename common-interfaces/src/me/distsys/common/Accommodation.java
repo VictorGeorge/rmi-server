@@ -3,6 +3,7 @@ package me.distsys.common;
 import java.io.Serializable;
 
 public class Accommodation implements Serializable {
+    private static final long serialVersionUID = 1L;
     private int id;
     private String hotel;
     private String dataEntrada;
@@ -12,6 +13,18 @@ public class Accommodation implements Serializable {
     private int precoPorQuarto;
     private int precoPorPessoa;
     private int valorTotal;
+
+    public Accommodation(int id, String hotel, String dataEntrada, String dataSaida, int numeroQuartos, int numeroPessoas, int precoPorQuarto, int precoPorPessoa, int valorTotal) {
+        this.id = id;
+        this.hotel = hotel;
+        this.dataEntrada = dataEntrada;
+        this.dataSaida = dataSaida;
+        this.numeroQuartos = numeroQuartos;
+        this.numeroPessoas = numeroPessoas;
+        this.precoPorQuarto = precoPorQuarto;
+        this.precoPorPessoa = precoPorPessoa;
+        this.valorTotal = valorTotal;
+    }
 
     public int getId() {
         return id;

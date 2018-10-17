@@ -48,8 +48,12 @@ public class ClientMain {
                     switch (choice2) {
                         case 1: {
                             SearchParams searchParams = showFlightSearchForm();
-                            int id = clientImpl.serverInterface.consultPlaneTickets(searchParams);
-                            clientImpl.serverInterface.buyPlaneTickets(id, searchParams.numeroPessoas);
+                            int[] id = clientImpl.serverInterface.consultPlaneTickets(searchParams);
+                            boolean buyed = clientImpl.serverInterface.buyPlaneTickets(id, searchParams.numeroPessoas);
+                            if(buyed == true)
+                                System.out.println("\nCompra bem sucedida\n");
+                            else
+                                System.out.println("\nPassagem com os seguintes parâmetros não encontrada!\n");
                             break;
                         }
                         case 2: {

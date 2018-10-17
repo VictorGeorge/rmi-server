@@ -1,6 +1,9 @@
 package me.distsys.common;
 
-public class SearchParams {
+import java.io.Serializable;
+
+public class SearchParams implements Serializable {
+    private static final long serialVersionUID = 1L;
     public String hotel;
     public String dataEntrada;
     public String dataSaida;

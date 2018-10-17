@@ -26,7 +26,7 @@ public class ClientInterfaceImpl extends UnicastRemoteObject implements ClientIn
      * @throws NotBoundException
      */
     ClientInterfaceImpl(Registry registry) throws RemoteException, NotBoundException {
-        serverInterface = (ServerInterface) registry.lookup("server");
+        serverInterface = (ServerInterface) registry.lookup("serverImpl");
     }
 
     /**
