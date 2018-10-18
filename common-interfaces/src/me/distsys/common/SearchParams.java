@@ -14,4 +14,5 @@ public class SearchParams implements Serializable {
     public String destino;
     public String dataIda;
     public String dataVolta;
+    public int preço;
 }

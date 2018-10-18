@@ -1,5 +1,6 @@
 package me.distsys.client;
 
+import me.distsys.common.ClientSubscription;
 import me.distsys.common.SearchParams;
 
 import java.rmi.NotBoundException;
@@ -36,8 +37,11 @@ public class ClientMain {
     //<editor-fold desc="UI Methods">
     // menu principal
     public void mainMenu() throws RemoteException {
-        int choice, choice2;
-        boolean buyed;
+        int choice, choice2, comprar;
+        int[] id;
+        int idHotel;
+        boolean buyed, result;
+        ClientSubscription subscription;
         do {
             System.out.println("1 - Consultar e comprar \n2 - Inscrever-se em notificações\n3 - Cancelar inscrição\n4 - Sair");
             choice = scanner.nextInt();
@@ -49,30 +53,68 @@ public class ClientMain {
                     switch (choice2) {
                         case 1: {
                             SearchParams searchParams = showFlightSearchForm();
-                            int[] id = clientImpl.serverInterface.consultPlaneTickets(searchParams);
-                            buyed = clientImpl.serverInterface.buyPlaneTickets(id, searchParams.numeroPessoas);
-                            if(buyed == true)
-                                System.out.println("\nCompra bem sucedida\n");
-                            else
+                            id = clientImpl.serverInterface.consultPlaneTickets(searchParams);
+                            if (id[0] == -1) {//Ida nao encontrada
                                 System.out.println("\nPassagem com os seguintes parâmetros não encontrada!\n");
+                            }
+                            else if(searchParams.idaEVolta == true && id[1] == -1)
+                                System.out.println("\nPassagem com os seguintes parâmetros não encontrada!\n");
+                            else {
+                                System.out.println("\nPassagem com os seguintes parâmetros encontrada!\nComprar?\n1 - Sim\n2 - Não");
+                                comprar = scanner.nextInt();
+                                if(comprar == 1) {
+                                    buyed = clientImpl.serverInterface.buyPlaneTickets(id, searchParams.numeroPessoas);
+                                    if (buyed == true)
+                                        System.out.println("\nCompra bem sucedida\n");
+                                    else
+                                        System.out.println("\nErro na compra!\n");
+
+                                }
+                            }
                             break;
                         }
                         case 2: {
                             SearchParams searchParams = showHotelSearchForm();
-                            int id = clientImpl.serverInterface.consultAccomodation(searchParams);
-                            buyed = clientImpl.serverInterface.buyAccomodation(id, searchParams.numeroQuartos, searchParams.numeroPessoas);
-                            if(buyed == true)
-                                System.out.println("\nCompra bem sucedida\n");
-                            else
-                                System.out.println("\nHotel com os seguintes parâmetros não encontrada!\n");
+                            idHotel = clientImpl.serverInterface.consultAccomodation(searchParams);
+                            if (idHotel == -1) {//Hospedagem nao encontrada
+                                System.out.println("\nHospedagem com os seguintes parâmetros não encontrado!\n");
+                            }
+                            else {
+                                System.out.println("\nHospedagem com os seguintes parâmetros encontrada!\nComprar?\n1 - Sim\n2 - Não");
+                                comprar = scanner.nextInt();
+                                if(comprar == 1) {
+                                    buyed = clientImpl.serverInterface.buyAccomodation(idHotel, searchParams.numeroQuartos, searchParams.numeroPessoas);
+                                    if (buyed == true)
+                                        System.out.println("\nCompra bem sucedida\n");
+                                    else
+                                        System.out.println("\nErro na compra. Hospedagem sem vagas!\n");
+                                }
+                            }
                             break;
                         }
                         case 3: {
-                            System.err.println("Not implemented yet!");
-//                            showFlightSearchForm();
-//                            showHotelSearchForm();
-//                            clientImpl.serverInterface.consultPackages(origem, destino, dataIda, dataVolta, numeroPessoas, hotel, dataEntrada, dataSaida, numeroQuartos);
-//                            clientImpl.serverInterface.buyPackage(origem, destino, dataIda, dataVolta, numeroPessoas, hotel, dataEntrada, dataSaida, numeroQuartos);
+                            SearchParams searchParams = showPackageForm();
+                            id = clientImpl.serverInterface.consultPackages(searchParams); //realiza consulta
+                            if (id[0] == -1) {//Ida nao encontrada
+                                System.out.println("\nPacote com os seguintes parâmetros não encontrado!\n");
+                            }
+                            else if(searchParams.idaEVolta == true && id[1] == -1)
+                                System.out.println("\nPacote com os seguintes parâmetros não encontrado!\n");
+                            else if (id[2] == -1) {//Hospedagem nao encontrada
+                                System.out.println("\nPacote com os seguintes parâmetros não encontrado!\n");
+                            }
+                            else {
+                                System.out.println("\nPacote com os seguintes parâmetros encontrada!\nComprar?\n1 - Sim\n2 - Não");
+                                comprar = scanner.nextInt();
+                                if(comprar == 1) {
+                                    buyed = clientImpl.serverInterface.buyPackage(id, searchParams.numeroQuartos, searchParams.numeroPessoas);
+                                    if (buyed == true)
+                                        System.out.println("\nCompra bem sucedida\n");
+                                    else
+                                        System.out.println("\nErro na compra. Hospedagem sem vagas!\n");
+                                }
+                            }
+                            //clientImpl.serverInterface.buyPackage(origem, destino, dataIda, dataVolta, numeroPessoas, hotel, dataEntrada, dataSaida, numeroQuartos);
                             break;
                         }
                         default:
@@ -81,16 +123,116 @@ public class ClientMain {
                     break;
                 }
                 case 2:
-                    System.err.println("Not implemented yet!");
+                    System.out.println("1 - Passagens\n2 - Hospedagem\n3 - Pacotes\n4 - Retornar a menu principal");
+                    choice2 = scanner.nextInt();
+                    switch (choice2) {
+                        case 1: {
+                            SearchParams searchParams = showFlightSearchForm();
+                            System.out.println("Preço máximo por pessoa: ");
+                            searchParams.preço = scanner.nextInt();
+                            subscription = new ClientSubscription(clientImpl);
+                            result = clientImpl.serverInterface.subscribe(searchParams, subscription);
+                            System.out.println(result ? "Inscrição em passagem feita com sucesso!" : "Inscrição em passagem falhou!");
+                            break;
+                        }
+                        case 2:{
+                            SearchParams searchParams = showHotelSearchForm();
+                            System.out.println("Preço máximo por pessoa: ");
+                            searchParams.preço = scanner.nextInt();
+                            subscription = new ClientSubscription(clientImpl);
+                            result = clientImpl.serverInterface.subscribe(searchParams, subscription);
+                            System.out.println(result ? "Inscrição em hospedagem feita com sucesso!" : "Inscrição em hospedagem falhou!");
+                            break;
+                        }
+                        case 3: {
+                            SearchParams searchParams = showPackageForm();
+                            subscription = new ClientSubscription(clientImpl);
+                            result = clientImpl.serverInterface.subscribe(searchParams, subscription);
+                            System.out.println(result ? "Inscrição em pacote feita com sucesso!" : "Inscrição em pacote falhou!");
+                            break;
+                        }
+                        default:
+                            break;
+                    }
                     break;
                 case 3:
-                    System.err.println("Not implemented yet!");
+                    System.out.println("1 - Passagens\n2 - Hospedagem\n3 - Pacotes\n4 - Retornar a menu principal");
+                    choice2 = scanner.nextInt();
+                    switch (choice2) {
+                        case 1: {
+                            SearchParams searchParams = showFlightSearchForm();
+                            System.out.println("Preço máximo por pessoa: ");
+                            searchParams.preço = scanner.nextInt();
+                            subscription = new ClientSubscription(clientImpl);
+                            result = clientImpl.serverInterface.unsubscribe(searchParams, subscription);
+                            System.out.println(result ? "Cancelamento de Inscrição em passagem feita com sucesso!" : "Cancelamento de Inscrição em passagem falhou!");
+                            break;
+                        }
+                        case 2:{
+                            SearchParams searchParams = showHotelSearchForm();
+                            System.out.println("Preço máximo por pessoa: ");
+                            searchParams.preço = scanner.nextInt();
+                            subscription = new ClientSubscription(clientImpl);
+                            result = clientImpl.serverInterface.subscribe(searchParams, subscription);
+                            System.out.println(result ? "Inscrição em hospedagem feita com sucesso!" : "Inscrição em hospedagem falhou!");
+                            break;
+                        }
+                        case 3: {
+                            SearchParams searchParams = showPackageForm();
+                            subscription = new ClientSubscription(clientImpl);
+                            result = clientImpl.serverInterface.subscribe(searchParams, subscription);
+                            System.out.println(result ? "Inscrição em pacote feita com sucesso!" : "Inscrição em pacote falhou!");
+                            break;
+                        }
+                        default:
+                            break;
+                    }
                     break;
                 case 4:
-                    clearResourcesOnServer();
+                    //clearResourcesOnServer();
                     break;
             }
         } while (choice != 4);
+    }
+
+    private SearchParams showPackageForm(){
+        SearchParams searchParams = new SearchParams();
+
+        System.out.println("\n1 - Ida e volta\n2 - Somente ida");
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+        searchParams.idaEVolta = choice == 1;
+        System.out.println("Origem: ");
+        searchParams.origem = scanner.nextLine();
+        System.out.println("Destino: ");
+        searchParams.destino = scanner.nextLine();
+        System.out.println("Data de ida (dd/mm/aaaa): ");
+        searchParams.dataIda = scanner.nextLine();
+        if (searchParams.idaEVolta) {
+            System.out.println("Data de volta (dd/mm/aaaa): ");
+            searchParams.dataVolta = scanner.nextLine();
+        } else {
+            searchParams.dataVolta = null;
+        }
+
+        System.out.println("Número de pessoas: ");
+        searchParams.numeroPessoas = scanner.nextInt();
+        scanner.nextLine();
+
+        System.out.println("\nInforme o nome do hotel: ");
+        searchParams.hotel = scanner.nextLine();
+
+        System.out.println("Informe a data de entrada (dd/mm/aaaa): ");
+        searchParams.dataEntrada = scanner.nextLine();
+
+        System.out.println("Informe a data de saída (dd/mm/aaaa): ");
+        searchParams.dataSaida = scanner.nextLine();
+
+        System.out.println("Informe o número de quartos: ");
+        searchParams.numeroQuartos = scanner.nextInt();
+        scanner.nextLine();
+
+        return searchParams;
     }
 
     private SearchParams showFlightSearchForm() {
@@ -143,6 +285,9 @@ public class ClientMain {
 
         return searchParams;
     }
+
+
+
     //</editor-fold>
 
     //<editor-fold desc="Event notification methods">
@@ -160,30 +305,16 @@ public class ClientMain {
             System.out.println(result ? "File unsubscribed successfully!" : "File unsubscribe failed!");
     }
 
-    // submenu de inscrição de interesse em um arquivo
-    private void subscribeSection() {
-            scanner.nextLine();
-            System.out.println("Currently subscribed items");
-            String[] strings = client.listClientSubscribedFiles();
-            Arrays.stream(strings).forEach(System.out::println);
-            System.out.println("Enter a file name: ");
-            String fileName = scanner.nextLine();
-            System.out.println("For how long to be subscribed: ");
-            String s = scanner.next(Pattern.compile("\\d{2}:\\d{2}"));
-            String[] split = s.split(":");
-            Duration duration = Duration.ofHours(Long.valueOf(split[0])).plusMinutes(Long.valueOf(split[1]));
-
-            boolean result = client.subscribe(fileName, duration.toMillis());
-            System.out.println(result ? "File subscribed successfully!" : "File subscribe failed!");
-    }*/
-    //</editor-fold>
 
     /**
      * Main do cliente
      *
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+
+    //TODO no subscribe de passagem, fazer um subscribe pra cada voo, unsubscribe, fazer o subscribe notify certo pra tudo e synchronized
+
+        public static void main(String[] args) {
         try {
             ClientMain m = new ClientMain();
             m.mainMenu();

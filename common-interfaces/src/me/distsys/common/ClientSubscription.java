@@ -11,14 +11,7 @@ public class ClientSubscription implements Serializable {
      */
     public ClientInterface clientInterface;
 
-    /**
-     * duração do interesse e quando ele começou (inicializado com o tempo em que o objeto é construído)
-     */
-    public long subscriptionDuration, startTime;
-
-    public ClientSubscription(ClientInterface clientInterface, long subscriptionDuration) {
+    public ClientSubscription(ClientInterface clientInterface) {
         this.clientInterface = clientInterface;
-        this.subscriptionDuration = subscriptionDuration;
-        this.startTime = System.currentTimeMillis();
     }
 }
