@@ -161,8 +161,6 @@ public class ClientMain {
                     switch (choice2) {
                         case 1: {
                             SearchParams searchParams = showFlightSearchForm();
-                            System.out.println("Preço máximo por pessoa: ");
-                            searchParams.preço = scanner.nextInt();
                             subscription = new ClientSubscription(clientImpl);
                             result = clientImpl.serverInterface.unsubscribe(searchParams, subscription);
                             System.out.println(result ? "Cancelamento de Inscrição em passagem feita com sucesso!" : "Cancelamento de Inscrição em passagem falhou!");

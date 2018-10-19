@@ -171,12 +171,18 @@ public class ServerInterfaceImpl extends UnicastRemoteObject implements ServerIn
         for(Map.Entry<SearchParams, List<ClientSubscription>> entry : subscribedFlights.entrySet()) {
             SearchParams key = entry.getKey();
             List<ClientSubscription> value = entry.getValue();
-            for (ClientSubscription subscription : value) {
-                if (subscription.equals(clientSubscription))
-                    value.remove(subscription);
+            if(key.origem.equals(searchParams.origem) && key.destino.equals(searchParams.destino) && key.dataIda.equals(searchParams.dataIda)) { //Se esse é o voo a se cancelar a inscrição
+                if(value != null) {
+                    for (ClientSubscription subscription : value) { //procura o cliente a se retirar
+                        if (subscription.clientInterface.equals(clientSubscription.clientInterface)) {
+                            value.remove(subscription);
+                            return true; //unsubscribe feito
+                        }
+                    }
+                }
             }
         }
-        return true;
+        return false;  //erro
     }
 
     @Override
