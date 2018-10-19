@@ -202,7 +202,15 @@ public class ServerInterfaceImpl extends UnicastRemoteObject implements ServerIn
             }
         }
         else if (searchParams.origem == null) {//É Hotel
-            clientSubscriptions = subscribedAccommodations.get(searchParams);
+            for(Map.Entry<SearchParams, List<ClientSubscription>> entry : subscribedAccommodations.entrySet()) {
+                SearchParams key = entry.getKey();
+                List<ClientSubscription> value = entry.getValue();
+                if(searchParams.hotel.equals(key.hotel) && searchParams.dataEntrada.equals(key.dataEntrada) && searchParams.dataSaida.equals(key.dataSaida) && searchParams.preço <= key.preço){
+                    for (ClientSubscription clientSubscription : value) {
+                        clientSubscription.clientInterface.notifyClient(String.format("O hotel %s com entrada em %s e saída em %s agora está disponível!", searchParams.hotel, searchParams.dataEntrada, searchParams.dataSaida));
+                    }
+                }
+            }
         }
         if (clientSubscriptions == null)
             return;
@@ -226,6 +234,7 @@ public class ServerInterfaceImpl extends UnicastRemoteObject implements ServerIn
         parameters.hotel = hotel;
         parameters.dataEntrada = dataEntrada;
         parameters.dataSaida = dataSaida;
+        parameters.preço = preçoPessoa;
         notifySubscribedClients(parameters);
     }
 }

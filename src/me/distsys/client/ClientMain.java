@@ -52,7 +52,7 @@ public class ClientMain {
                     choice2 = scanner.nextInt();
                     switch (choice2) {
                         case 1: {
-                            SearchParams searchParams = showFlightSearchForm();
+                            SearchParams searchParams = showFlightSearchForm(1);
                             id = clientImpl.serverInterface.consultPlaneTickets(searchParams);
                             if (id[0] == -1) {//Ida nao encontrada
                                 System.out.println("\nPassagem com os seguintes parâmetros não encontrada!\n");
@@ -127,7 +127,7 @@ public class ClientMain {
                     choice2 = scanner.nextInt();
                     switch (choice2) {
                         case 1: {
-                            SearchParams searchParams = showFlightSearchForm();
+                            SearchParams searchParams = showFlightSearchForm(2);
                             System.out.println("Preço máximo por pessoa: ");
                             searchParams.preço = scanner.nextInt();
                             subscription = new ClientSubscription(clientImpl);
@@ -160,7 +160,7 @@ public class ClientMain {
                     choice2 = scanner.nextInt();
                     switch (choice2) {
                         case 1: {
-                            SearchParams searchParams = showFlightSearchForm();
+                            SearchParams searchParams = showFlightSearchForm(3);
                             subscription = new ClientSubscription(clientImpl);
                             result = clientImpl.serverInterface.unsubscribe(searchParams, subscription);
                             System.out.println(result ? "Cancelamento de Inscrição em passagem feita com sucesso!" : "Cancelamento de Inscrição em passagem falhou!");
@@ -231,13 +231,16 @@ public class ClientMain {
         return searchParams;
     }
 
-    private SearchParams showFlightSearchForm() {
+    private SearchParams showFlightSearchForm(int menuNumber) {
         SearchParams searchParams = new SearchParams();
+        searchParams.idaEVolta = false;
 
-        System.out.println("\n1 - Ida e volta\n2 - Somente ida");
-        int choice = scanner.nextInt();
+        if(menuNumber == 1) { //Somente compra permite ida e volta
+            System.out.println("\n1 - Ida e volta\n2 - Somente ida");
+            int choice = scanner.nextInt();
+            searchParams.idaEVolta = choice == 1;
+        }
         scanner.nextLine();
-        searchParams.idaEVolta = choice == 1;
         System.out.println("Origem: ");
         searchParams.origem = scanner.nextLine();
         System.out.println("Destino: ");
@@ -308,7 +311,7 @@ public class ClientMain {
      * @param args the command line arguments
      */
 
-    //TODO no subscribe de passagem, fazer um subscribe pra cada voo, unsubscribe, fazer o subscribe notify certo pra tudo e synchronized
+    //TODO fazer o subscribe notify e unsubscribe certo pra tudo
 
         public static void main(String[] args) {
         try {
