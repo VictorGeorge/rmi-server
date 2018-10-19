@@ -168,18 +168,16 @@ public class ClientMain {
                         }
                         case 2:{
                             SearchParams searchParams = showHotelSearchForm();
-                            System.out.println("Preço máximo por pessoa: ");
-                            searchParams.preço = scanner.nextInt();
                             subscription = new ClientSubscription(clientImpl);
                             result = clientImpl.serverInterface.subscribe(searchParams, subscription);
-                            System.out.println(result ? "Inscrição em hospedagem feita com sucesso!" : "Inscrição em hospedagem falhou!");
+                            System.out.println(result ? "Cancelamento de Inscrição em hospedagem feita com sucesso!" : "Cancelamento de Inscrição em hospedagem falhou!");
                             break;
                         }
                         case 3: {
                             SearchParams searchParams = showPackageForm();
                             subscription = new ClientSubscription(clientImpl);
                             result = clientImpl.serverInterface.subscribe(searchParams, subscription);
-                            System.out.println(result ? "Inscrição em pacote feita com sucesso!" : "Inscrição em pacote falhou!");
+                            System.out.println(result ? "Cancelamento de Inscrição em pacote feita com sucesso!" : "Cancelamento de Inscrição em pacote falhou!");
                             break;
                         }
                         default:

@@ -39,6 +39,7 @@ public class ServerInterfaceImpl extends UnicastRemoteObject implements ServerIn
         flights.add(new Flight("YYZ", "GRU", "11/02/2019", 150, 100));
         flights.add(new Flight("JFK", "GRU", "10/02/2019", 150, 100));
         flights.add(new Flight("GRU", "JFK", "11/02/2019", 150, 100));
+        flights.add(new Flight("q", "w", "e", 150, 100));
 
         accommodations.add(new Accommodation(0, "Copacabana", "10/02/2019", "14/02/2019", 100, 400, 320, 100, 420));
         accommodations.add(new Accommodation(1, "b", "11/02/2019", "11/02/2019", 120, 420, 320, 100, 420));
@@ -74,7 +75,7 @@ public class ServerInterfaceImpl extends UnicastRemoteObject implements ServerIn
     }
 
     @Override
-    public boolean buyPlaneTickets(int[] idsTuple, int numeroPessoas) throws RemoteException {
+    public synchronized boolean buyPlaneTickets(int[] idsTuple, int numeroPessoas) throws RemoteException {
         if (idsTuple[0] == -1)//error in buying
             return false;
         Flight departureFlight = flights.get(idsTuple[0]);
@@ -110,7 +111,7 @@ public class ServerInterfaceImpl extends UnicastRemoteObject implements ServerIn
     }
 
     @Override
-    public boolean buyAccomodation(int id, int numeroQuartos, int numeroPessoas) throws RemoteException {
+    public synchronized boolean buyAccomodation(int id, int numeroQuartos, int numeroPessoas) throws RemoteException {
         if (id == -1)//error in buying
             return false;
         int vagas = accommodations.get(id).getNumeroPessoas();
@@ -141,7 +142,7 @@ public class ServerInterfaceImpl extends UnicastRemoteObject implements ServerIn
     }
 
     @Override
-    public boolean buyPackage(int[] idsTuple, int numeroQuartos, int numeroPessoas) throws RemoteException{
+    public synchronized boolean buyPackage(int[] idsTuple, int numeroQuartos, int numeroPessoas) throws RemoteException{
         boolean b = buyPlaneTickets(idsTuple, numeroPessoas);
         if(b)
             b = buyAccomodation(idsTuple[2], numeroQuartos, numeroPessoas);
