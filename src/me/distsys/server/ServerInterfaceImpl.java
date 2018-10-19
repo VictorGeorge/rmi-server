@@ -169,15 +169,33 @@ public class ServerInterfaceImpl extends UnicastRemoteObject implements ServerIn
 
     @Override
     public boolean unsubscribe(SearchParams searchParams, ClientSubscription clientSubscription) throws RemoteException{
-        for(Map.Entry<SearchParams, List<ClientSubscription>> entry : subscribedFlights.entrySet()) {
-            SearchParams key = entry.getKey();
-            List<ClientSubscription> value = entry.getValue();
-            if(key.origem.equals(searchParams.origem) && key.destino.equals(searchParams.destino) && key.dataIda.equals(searchParams.dataIda)) { //Se esse é o voo a se cancelar a inscrição
-                if(value != null) {
-                    for (ClientSubscription subscription : value) { //procura o cliente a se retirar
-                        if (subscription.clientInterface.equals(clientSubscription.clientInterface)) {
-                            value.remove(subscription);
-                            return true; //unsubscribe feito
+        if (searchParams.hotel == null) {//É passagem de aviao
+            for (Map.Entry<SearchParams, List<ClientSubscription>> entry : subscribedFlights.entrySet()) {
+                SearchParams key = entry.getKey();
+                List<ClientSubscription> value = entry.getValue();
+                if (key.origem.equals(searchParams.origem) && key.destino.equals(searchParams.destino) && key.dataIda.equals(searchParams.dataIda)) { //Se esse é o voo a se cancelar a inscrição
+                    if (value != null) {
+                        for (ClientSubscription subscription : value) { //procura o cliente a se retirar
+                            if (subscription.clientInterface.equals(clientSubscription.clientInterface)) {
+                                value.remove(subscription);
+                                return true; //unsubscribe feito
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else if (searchParams.origem == null) {//É Hotel
+            for (Map.Entry<SearchParams, List<ClientSubscription>> entry : subscribedAccommodations.entrySet()) {
+                SearchParams key = entry.getKey();
+                List<ClientSubscription> value = entry.getValue();
+                if(searchParams.hotel.equals(key.hotel) && searchParams.dataEntrada.equals(key.dataEntrada) && searchParams.dataSaida.equals(key.dataSaida)){ //Se esse é o hotel a se cancelar a inscrição
+                    if (value != null) {
+                        for (ClientSubscription subscription : value) { //procura o cliente a se retirar
+                            if (subscription.clientInterface.equals(clientSubscription.clientInterface)) {
+                                value.remove(subscription);
+                                return true; //unsubscribe feito
+                            }
                         }
                     }
                 }
@@ -212,7 +230,7 @@ public class ServerInterfaceImpl extends UnicastRemoteObject implements ServerIn
                 }
             }
         }
-        if (clientSubscriptions == null)
+        if (clientSubscriptions == null)//Pacote
             return;
     }
 

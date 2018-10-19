@@ -169,14 +169,14 @@ public class ClientMain {
                         case 2:{
                             SearchParams searchParams = showHotelSearchForm();
                             subscription = new ClientSubscription(clientImpl);
-                            result = clientImpl.serverInterface.subscribe(searchParams, subscription);
+                            result = clientImpl.serverInterface.unsubscribe(searchParams, subscription);
                             System.out.println(result ? "Cancelamento de Inscrição em hospedagem feita com sucesso!" : "Cancelamento de Inscrição em hospedagem falhou!");
                             break;
                         }
                         case 3: {
                             SearchParams searchParams = showPackageForm();
                             subscription = new ClientSubscription(clientImpl);
-                            result = clientImpl.serverInterface.subscribe(searchParams, subscription);
+                            result = clientImpl.serverInterface.unsubscribe(searchParams, subscription);
                             System.out.println(result ? "Cancelamento de Inscrição em pacote feita com sucesso!" : "Cancelamento de Inscrição em pacote falhou!");
                             break;
                         }
