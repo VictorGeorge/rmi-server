@@ -267,7 +267,7 @@ public class ServerInterfaceImpl extends UnicastRemoteObject implements ServerIn
                     key.hotel = key.dataEntrada = key.dataSaida =  null; //anulo os atributos do pacote que ja foram preenchidos
                     if(key.dataIda == null && key.dataVolta == null && key.origem == null && key.destino == null) { // se dados de passagem ja tinham sido anulados é pq tudo do pacote ja foi adicionado
                         for (ClientSubscription clientSubscription : value) {
-                            clientSubscription.clientInterface.notifyClient(String.format("O pacote no hotel %s e voo de %s para %s agora está disponível!", key.hotel, key.origem, key.destino));
+                            clientSubscription.clientInterface.notifyClient(String.format("O pacote requisitado agora está disponível!", key.hotel, key.origem, key.destino));
                         }
                     }
                 }

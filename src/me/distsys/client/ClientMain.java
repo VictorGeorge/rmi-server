@@ -8,10 +8,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-// classe que implementa a UI do programa. Todos os menus e submenus, sao exibidos aqui.
 public class ClientMain {
     private ClientInterfaceImpl clientImpl;
     private Scanner scanner;
@@ -187,7 +184,7 @@ public class ClientMain {
                     }
                     break;
                 case 4:
-                    //clearResourcesOnServer();
+                    System.exit(0);
                     break;
             }
         } while (choice != 4);
@@ -287,34 +284,6 @@ public class ClientMain {
         return searchParams;
     }
 
-
-
-    //</editor-fold>
-
-    //<editor-fold desc="Event notification methods">
-/*
-    // submenu de desinscrição de interesse em um arquivo
-    private void unsubscribeSection() {
-            scanner.nextLine();
-            System.out.println("Currently subscribed items");
-            String[] strings = client.listClientSubscribedFiles();
-            Arrays.stream(strings).forEach(System.out::println);
-            System.out.println("Enter a file name: ");
-            String fileName = scanner.nextLine();
-
-            boolean result = client.unsubscribe(fileName);
-            System.out.println(result ? "File unsubscribed successfully!" : "File unsubscribe failed!");
-    }
-
-
-    /**
-     * Main do cliente
-     *
-     * @param args the command line arguments
-     */
-
-    //TODO fazer o subscribe notify e unsubscribe certo pra tudo
-
         public static void main(String[] args) {
         try {
             ClientMain m = new ClientMain();
@@ -322,7 +291,6 @@ public class ClientMain {
         } catch (RemoteException | NotBoundException e) {
             e.printStackTrace();
         }
-        // System.exit é usado porque o cliente RMI inicializa um Daemon que não encerra com o fim da execução principal.
         System.exit(0);
     }
 }
