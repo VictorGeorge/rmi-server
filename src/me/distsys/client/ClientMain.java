@@ -146,6 +146,8 @@ public class ClientMain {
                         }
                         case 3: {
                             SearchParams searchParams = showPackageForm();
+                            System.out.println("Preço máximo por pessoa: ");
+                            searchParams.preço = scanner.nextInt();
                             subscription = new ClientSubscription(clientImpl);
                             result = clientImpl.serverInterface.subscribe(searchParams, subscription);
                             System.out.println(result ? "Inscrição em pacote feita com sucesso!" : "Inscrição em pacote falhou!");

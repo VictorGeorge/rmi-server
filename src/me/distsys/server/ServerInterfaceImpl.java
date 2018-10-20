@@ -201,19 +201,49 @@ public class ServerInterfaceImpl extends UnicastRemoteObject implements ServerIn
                 }
             }
         }
+        else {//Pacote
+            for (Map.Entry<SearchParams, List<ClientSubscription>> entry : subscribedPackages.entrySet()) {
+                SearchParams key = entry.getKey();
+                List<ClientSubscription> value = entry.getValue();
+                if(searchParams.hotel.equals(key.hotel) && searchParams.dataEntrada.equals(key.dataEntrada) && searchParams.dataSaida.equals(key.dataSaida)
+                && key.origem.equals(searchParams.origem) && key.destino.equals(searchParams.destino) && key.dataIda.equals(searchParams.dataIda)){ //Se esse é o pacote a se cancelar a inscrição
+                    if (value != null) {
+                        for (ClientSubscription subscription : value) { //procura o cliente a se retirar
+                            if (subscription.clientInterface.equals(clientSubscription.clientInterface)) {
+                                value.remove(subscription);
+                                return true; //unsubscribe feito
+                            }
+                        }
+                    }
+                }
+            }
+        }
         return false;  //erro
     }
 
     @Override
     public void notifySubscribedClients(SearchParams searchParams) throws RemoteException{
         if (searchParams.hotel == null) {//É passagem de aviao
-            for(Map.Entry<SearchParams, List<ClientSubscription>> entry : subscribedFlights.entrySet()) {
+            for(Map.Entry<SearchParams, List<ClientSubscription>> entry : subscribedFlights.entrySet()) { //verificação hashmap de passagens
                 SearchParams key = entry.getKey();
                 List<ClientSubscription> value = entry.getValue();
                 if(searchParams.dataIda.equals(key.dataIda) && searchParams.destino.equals(key.destino) && searchParams.origem.equals(key.origem) && searchParams.preço <= key.preço){
                     if(searchParams.dataVolta == null || searchParams.dataVolta == key.dataVolta) {
                         for (ClientSubscription clientSubscription : value) {
                             clientSubscription.clientInterface.notifyClient(String.format("O voo de %s para %s agora tá disponível!", searchParams.origem, searchParams.destino));
+                        }
+                    }
+                }
+            }
+
+            for(Map.Entry<SearchParams, List<ClientSubscription>> entry : subscribedPackages.entrySet()) {
+                SearchParams key = entry.getKey();
+                List<ClientSubscription> value = entry.getValue();
+                if(searchParams.dataIda.equals(key.dataIda) && searchParams.destino.equals(key.destino) && searchParams.origem.equals(key.origem)){ //essa passagem ta nesse pacote
+                    key.dataIda = key.dataVolta = key.destino = key.origem = null; //anulo os atributos do pacote que ja foram preenchidos
+                    if(key.hotel == null && key.dataEntrada == null && key.dataSaida == null) { // se dados de hospedagem ja tinham sido anulados é pq tudo do pacote ja foi adicionado
+                        for (ClientSubscription clientSubscription : value) {
+                            clientSubscription.clientInterface.notifyClient(String.format("O pacote requisitado agora está disponível!", key.hotel, key.origem, key.destino));
                         }
                     }
                 }
@@ -225,13 +255,24 @@ public class ServerInterfaceImpl extends UnicastRemoteObject implements ServerIn
                 List<ClientSubscription> value = entry.getValue();
                 if(searchParams.hotel.equals(key.hotel) && searchParams.dataEntrada.equals(key.dataEntrada) && searchParams.dataSaida.equals(key.dataSaida) && searchParams.preço <= key.preço){
                     for (ClientSubscription clientSubscription : value) {
-                        clientSubscription.clientInterface.notifyClient(String.format("O hotel %s com entrada em %s e saída em %s agora está disponível!", searchParams.hotel, searchParams.dataEntrada, searchParams.dataSaida));
+                        clientSubscription.clientInterface.notifyClient(String.format("O hotel requisitado agora está disponível!", searchParams.hotel, searchParams.dataEntrada, searchParams.dataSaida));
+                    }
+                }
+            }
+
+            for(Map.Entry<SearchParams, List<ClientSubscription>> entry : subscribedPackages.entrySet()) {
+                SearchParams key = entry.getKey();
+                List<ClientSubscription> value = entry.getValue();
+                if(searchParams.hotel.equals(key.hotel) && searchParams.dataEntrada.equals(key.dataEntrada) && searchParams.dataSaida.equals(key.dataSaida)){ //esse hotel ta nesse pacote
+                    key.hotel = key.dataEntrada = key.dataSaida =  null; //anulo os atributos do pacote que ja foram preenchidos
+                    if(key.dataIda == null && key.dataVolta == null && key.origem == null && key.destino == null) { // se dados de passagem ja tinham sido anulados é pq tudo do pacote ja foi adicionado
+                        for (ClientSubscription clientSubscription : value) {
+                            clientSubscription.clientInterface.notifyClient(String.format("O pacote no hotel %s e voo de %s para %s agora está disponível!", key.hotel, key.origem, key.destino));
+                        }
                     }
                 }
             }
         }
-        if (clientSubscriptions == null)//Pacote
-            return;
     }
 
     @Override
