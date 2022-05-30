@@ -1,5 +1,5 @@
 # rmi-server
-Distributed Systems project 2
+Distributed System
 
 # Sobre o trabalho
 Arquitetura Cliente-Servidor, Modelo Publisher/Subscriber (Eventos e
